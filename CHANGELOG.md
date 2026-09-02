@@ -5,6 +5,8 @@ is based on Keep a Changelog and this project follows Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-09-02
+
 ### Added
 
 - Initial zero-dependency CLI snapshot and compatibility diff engine.

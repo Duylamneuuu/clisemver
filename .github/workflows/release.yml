@@ -1,24 +1,71 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - v*
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+  workflow_dispatch:
 
 permissions:
   contents: write
 
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
   release:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == github.event.repository.default_branch)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm run check
-      - run: npm pack --ignore-scripts
-      - name: Create GitHub release
+      - name: Resolve release
+        id: release
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid package version: $VERSION" >&2
+            exit 1
+          fi
+          TAG="v$VERSION"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" ./*.tgz --verify-tag --generate-notes --title "$GITHUB_REF_NAME"
+      - name: Create tag
+        if: steps.release.outputs.skip != 'true'
+        shell: bash
+        run: |
+          TAG="${{ steps.release.outputs.tag }}"
+          if ! git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            git config user.name github-actions[bot]
+            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+            git tag "$TAG" "${{ github.event.workflow_run.head_sha || github.sha }}"
+            git push origin "refs/tags/$TAG"
+          fi
+      - name: Build package
+        if: steps.release.outputs.skip != 'true'
+        run: npm pack --ignore-scripts
+      - name: Create GitHub release
+        if: steps.release.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create "${{ steps.release.outputs.tag }}" ./*.tgz
+          --verify-tag --generate-notes
+          --title "${{ steps.release.outputs.tag }}"

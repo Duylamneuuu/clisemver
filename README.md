@@ -178,6 +178,9 @@ command:
 npm run check
 ```
 
+Maintainers can also complete the [release process](docs/RELEASING.md) entirely in
+GitHub without a local checkout.
+
 ## License
 
 MIT
