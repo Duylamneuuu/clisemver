@@ -1,0 +1,420 @@
+{
+  "schemaVersion": 1,
+  "command": [
+    "node",
+    "./bin/clisemver.js"
+  ],
+  "version": "0.1.0",
+  "warnings": [],
+  "root": {
+    "name": "clisemver",
+    "path": [],
+    "usage": "clisemver <command> [options]",
+    "description": "clisemver 0.1.0 Detect breaking changes in command-line interfaces.",
+    "options": [
+      {
+        "key": "--help",
+        "names": [
+          "-h",
+          "--help"
+        ],
+        "argument": null,
+        "required": false,
+        "negatable": false,
+        "description": "Show help."
+      },
+      {
+        "key": "--version",
+        "names": [
+          "-v",
+          "--version"
+        ],
+        "argument": null,
+        "required": false,
+        "negatable": false,
+        "description": "Show clisemver version."
+      }
+    ],
+    "positionals": [],
+    "subcommands": [
+      {
+        "name": "check",
+        "path": [
+          "check"
+        ],
+        "usage": "clisemver check --against <file> [options] -- <command> [args...]",
+        "description": "Capture a CLI and compare it with a saved snapshot.",
+        "options": [
+          {
+            "key": "--against",
+            "names": [
+              "--against"
+            ],
+            "argument": {
+              "name": "file",
+              "required": true,
+              "variadic": false
+            },
+            "required": true,
+            "negatable": false,
+            "description": "Baseline snapshot [required]"
+          },
+          {
+            "key": "--cwd",
+            "names": [
+              "--cwd"
+            ],
+            "argument": {
+              "name": "directory",
+              "required": true,
+              "variadic": false
+            },
+            "required": false,
+            "negatable": false,
+            "description": "Working directory for the target command"
+          },
+          {
+            "key": "--fail-on",
+            "names": [
+              "--fail-on"
+            ],
+            "argument": {
+              "name": "level",
+              "required": true,
+              "variadic": false
+            },
+            "required": false,
+            "negatable": false,
+            "description": "major, minor, patch, or none [default: major]",
+            "default": "major"
+          },
+          {
+            "key": "--format",
+            "names": [
+              "--format"
+            ],
+            "argument": {
+              "name": "type",
+              "required": true,
+              "variadic": false
+            },
+            "required": false,
+            "negatable": false,
+            "description": "text, markdown, or json [default: text]",
+            "default": "text"
+          },
+          {
+            "key": "--help",
+            "names": [
+              "-h",
+              "--help"
+            ],
+            "argument": null,
+            "required": false,
+            "negatable": false,
+            "description": "Show help"
+          },
+          {
+            "key": "--help-flag",
+            "names": [
+              "--help-flag"
+            ],
+            "argument": {
+              "name": "value",
+              "required": true,
+              "variadic": false
+            },
+            "required": false,
+            "negatable": false,
+            "description": "Target help flag [default: --help]",
+            "default": "--help"
+          },
+          {
+            "key": "--max-depth",
+            "names": [
+              "--max-depth"
+            ],
+            "argument": {
+              "name": "number",
+              "required": true,
+              "variadic": false
+            },
+            "required": false,
+            "negatable": false,
+            "description": "Maximum subcommand depth [default: 4]",
+            "default": "4"
+          },
+          {
+            "key": "--no-version",
+            "names": [
+              "--no-version"
+            ],
+            "argument": null,
+            "required": false,
+            "negatable": false,
+            "description": "Skip target version detection"
+          },
+          {
+            "key": "--timeout",
+            "names": [
+              "--timeout"
+            ],
+            "argument": {
+              "name": "milliseconds",
+              "required": true,
+              "variadic": false
+            },
+            "required": false,
+            "negatable": false,
+            "description": "Timeout for each invocation [default: 10000]",
+            "default": "10000"
+          },
+          {
+            "key": "--version-flag",
+            "names": [
+              "--version-flag"
+            ],
+            "argument": {
+              "name": "value",
+              "required": true,
+              "variadic": false
+            },
+            "required": false,
+            "negatable": false,
+            "description": "Target version flag [default: --version]",
+            "default": "--version"
+          }
+        ],
+        "positionals": [
+          {
+            "name": "args",
+            "required": false,
+            "variadic": true
+          }
+        ],
+        "subcommands": []
+      },
+      {
+        "name": "diff",
+        "path": [
+          "diff"
+        ],
+        "usage": "clisemver diff <before.json> <after.json> [options]",
+        "description": "Compare two existing snapshots.",
+        "options": [
+          {
+            "key": "--fail-on",
+            "names": [
+              "--fail-on"
+            ],
+            "argument": {
+              "name": "level",
+              "required": true,
+              "variadic": false
+            },
+            "required": false,
+            "negatable": false,
+            "description": "major, minor, patch, or none [default: major]",
+            "default": "major"
+          },
+          {
+            "key": "--format",
+            "names": [
+              "--format"
+            ],
+            "argument": {
+              "name": "type",
+              "required": true,
+              "variadic": false
+            },
+            "required": false,
+            "negatable": false,
+            "description": "text, markdown, or json [default: text]",
+            "default": "text"
+          },
+          {
+            "key": "--help",
+            "names": [
+              "-h",
+              "--help"
+            ],
+            "argument": null,
+            "required": false,
+            "negatable": false,
+            "description": "Show help"
+          }
+        ],
+        "positionals": [
+          {
+            "name": "before.json",
+            "required": true,
+            "variadic": false
+          },
+          {
+            "name": "after.json",
+            "required": true,
+            "variadic": false
+          }
+        ],
+        "subcommands": []
+      },
+      {
+        "name": "snapshot",
+        "path": [
+          "snapshot"
+        ],
+        "usage": "clisemver snapshot [options] -- <command> [args...]",
+        "description": "Capture a deterministic CLI interface snapshot.",
+        "options": [
+          {
+            "key": "--cwd",
+            "names": [
+              "--cwd"
+            ],
+            "argument": {
+              "name": "directory",
+              "required": true,
+              "variadic": false
+            },
+            "required": false,
+            "negatable": false,
+            "description": "Working directory for the target command"
+          },
+          {
+            "key": "--help",
+            "names": [
+              "-h",
+              "--help"
+            ],
+            "argument": null,
+            "required": false,
+            "negatable": false,
+            "description": "Show help"
+          },
+          {
+            "key": "--help-flag",
+            "names": [
+              "--help-flag"
+            ],
+            "argument": {
+              "name": "value",
+              "required": true,
+              "variadic": false
+            },
+            "required": false,
+            "negatable": false,
+            "description": "Target help flag [default: --help]",
+            "default": "--help"
+          },
+          {
+            "key": "--max-depth",
+            "names": [
+              "--max-depth"
+            ],
+            "argument": {
+              "name": "number",
+              "required": true,
+              "variadic": false
+            },
+            "required": false,
+            "negatable": false,
+            "description": "Maximum subcommand depth [default: 4]",
+            "default": "4"
+          },
+          {
+            "key": "--no-version",
+            "names": [
+              "--no-version"
+            ],
+            "argument": null,
+            "required": false,
+            "negatable": false,
+            "description": "Skip target version detection"
+          },
+          {
+            "key": "--output",
+            "names": [
+              "-o",
+              "--output"
+            ],
+            "argument": {
+              "name": "file",
+              "required": true,
+              "variadic": false
+            },
+            "required": false,
+            "negatable": false,
+            "description": "Write the snapshot to a file"
+          },
+          {
+            "key": "--timeout",
+            "names": [
+              "--timeout"
+            ],
+            "argument": {
+              "name": "milliseconds",
+              "required": true,
+              "variadic": false
+            },
+            "required": false,
+            "negatable": false,
+            "description": "Timeout for each invocation [default: 10000]",
+            "default": "10000"
+          },
+          {
+            "key": "--version-flag",
+            "names": [
+              "--version-flag"
+            ],
+            "argument": {
+              "name": "value",
+              "required": true,
+              "variadic": false
+            },
+            "required": false,
+            "negatable": false,
+            "description": "Target version flag [default: --version]",
+            "default": "--version"
+          }
+        ],
+        "positionals": [
+          {
+            "name": "args",
+            "required": false,
+            "variadic": true
+          }
+        ],
+        "subcommands": []
+      },
+      {
+        "name": "validate",
+        "path": [
+          "validate"
+        ],
+        "usage": "clisemver validate <snapshot.json>",
+        "description": "Validate the snapshot schema.",
+        "options": [
+          {
+            "key": "--help",
+            "names": [
+              "-h",
+              "--help"
+            ],
+            "argument": null,
+            "required": false,
+            "negatable": false,
+            "description": "Show help"
+          }
+        ],
+        "positionals": [
+          {
+            "name": "snapshot.json",
+            "required": true,
+            "variadic": false
+          }
+        ],
+        "subcommands": []
+      }
+    ]
+  }
+}

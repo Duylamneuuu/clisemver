@@ -1,0 +1,58 @@
+{
+  "name": "clisemver",
+  "version": "0.1.0",
+  "description": "Detect breaking changes in command-line interfaces.",
+  "type": "module",
+  "bin": {
+    "clisemver": "./bin/clisemver.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./src/index.d.ts",
+  "files": [
+    "action/",
+    "bin/",
+    "src/",
+    "action.yml",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "check": "npm run lint && npm test && npm run check:self",
+    "check:self": "node ./bin/clisemver.js check --against .clisemver/snapshot.json -- node ./bin/clisemver.js",
+    "lint": "node scripts/lint.mjs",
+    "snapshot": "node ./bin/clisemver.js snapshot --output .clisemver/snapshot.json -- node ./bin/clisemver.js",
+    "test": "node --test",
+    "test:coverage": "node --test --experimental-test-coverage",
+    "prepack": "npm run check"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "breaking-changes",
+    "cli",
+    "compatibility",
+    "github-action",
+    "semver"
+  ],
+  "author": "Duylamneuuu",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Duylamneuuu/clisemver.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Duylamneuuu/clisemver/issues"
+  },
+  "homepage": "https://github.com/Duylamneuuu/clisemver#readme",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

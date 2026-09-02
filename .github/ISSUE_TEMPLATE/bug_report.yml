@@ -1,0 +1,55 @@
+name: Bug report
+description: Report incorrect capture, diff, or CLI behavior
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve clisemver.
+  - type: input
+    id: version
+    attributes:
+      label: clisemver version
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Help parser
+        - Snapshot capture
+        - Compatibility classification
+        - GitHub Action
+        - Library API
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Use synthetic help output and remove secrets or private paths.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: input
+    id: runtime
+    attributes:
+      label: Runtime and operating system
+      placeholder: Node.js 20 on Ubuntu
+    validations:
+      required: true

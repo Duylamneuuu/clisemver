@@ -1,0 +1,38 @@
+name: clisemver
+description: Detect breaking changes in a command-line interface
+author: Duylamneuuu
+branding:
+  icon: terminal
+  color: purple
+inputs:
+  command:
+    description: JSON array containing the executable and arguments
+    required: true
+  snapshot:
+    description: Path to the committed baseline snapshot
+    required: false
+    default: .clisemver/snapshot.json
+  fail-on:
+    description: Lowest SemVer level that fails the check
+    required: false
+    default: major
+  max-depth:
+    description: Maximum subcommand depth to inspect
+    required: false
+    default: "4"
+  timeout:
+    description: Timeout in milliseconds for each target invocation
+    required: false
+    default: "10000"
+outputs:
+  required-bump:
+    description: none, patch, minor, or major
+  major:
+    description: Number of major changes
+  minor:
+    description: Number of minor changes
+  patch:
+    description: Number of patch changes
+runs:
+  using: node20
+  main: action/index.js
