@@ -53,7 +53,7 @@ jobs:
       - run: npm ci
       - run: npm run build
       - id: clisemver
-        uses: Duylamneuuu/clisemver@v0.1.0
+        uses: Duylamneuuu/clisemver@main
         with:
           command: '["node","./dist/cli.js"]'
           fail-on: major
