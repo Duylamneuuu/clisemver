@@ -53,12 +53,13 @@ jobs:
       - run: npm ci
       - run: npm run build
       - id: clisemver
-        uses: Duylamneuuu/clisemver@main
+        uses: Duylamneuuu/clisemver@v0.1.0
         with:
           command: '["node","./dist/cli.js"]'
           fail-on: major
       - run: echo "Required bump is ${{ steps.clisemver.outputs.required-bump }}"
 ```
 
-Pin a release tag or full commit SHA in production workflows. The Action does not
-download packages or send captured help output to an external service.
+For the strongest supply-chain pinning, replace the release tag with its full
+commit SHA in production. The Action does not download packages or send captured
+help output to an external service.

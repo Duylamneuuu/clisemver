@@ -16,7 +16,7 @@ jobs:
           node-version: 20
       - run: npm ci
       - run: npm run build
-      - uses: Duylamneuuu/clisemver@main
+      - uses: Duylamneuuu/clisemver@v0.1.0
         with:
           command: '["node","./dist/cli.js"]'
           snapshot: .clisemver/snapshot.json
