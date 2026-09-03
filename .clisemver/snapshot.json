@@ -4,13 +4,13 @@
     "node",
     "./bin/clisemver.js"
   ],
-  "version": "0.1.0",
+  "version": "0.3.0",
   "warnings": [],
   "root": {
     "name": "clisemver",
     "path": [],
     "usage": "clisemver <command> [options]",
-    "description": "clisemver 0.1.0 Detect breaking changes in command-line interfaces.",
+    "description": "clisemver 0.3.0 Detect breaking changes in command-line interfaces.",
     "options": [
       {
         "key": "--help",

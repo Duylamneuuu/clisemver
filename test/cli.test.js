@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -33,7 +33,7 @@ test("shows help and version", async () => {
 
   const versionIo = io();
   assert.equal(await runCli(["--version"], versionIo), 0);
-  assert.match(versionIo.stdout.read(), /^0\.2\.0/u);
+  assert.match(versionIo.stdout.read(), /^0\.3\.0/u);
 });
 
 test("captures, validates, and checks snapshots end to end", async (context) => {
@@ -95,4 +95,32 @@ test("uses exit code 2 for invalid usage", async () => {
   const flagIo = io();
   assert.equal(await runCli(["wat"], flagIo), 2);
   assert.match(flagIo.stderr.read(), /Unknown command/u);
+});
+
+test("uses config for target, snapshot, and output options", async (context) => {
+  const temporary = await mkdtemp(path.join(os.tmpdir(), "clisemver-config-cli-"));
+  context.after(() => rm(temporary, { recursive: true, force: true }));
+  await writeFile(
+    path.join(temporary, "clisemver.config.json"),
+    JSON.stringify({
+      command: [process.execPath, fixtureV1],
+      snapshot: "baseline.json",
+      failOn: "minor",
+      format: "json",
+    }),
+    "utf8",
+  );
+
+  const snapshotIo = { cwd: temporary, stdout: memoryStream(), stderr: memoryStream() };
+  assert.equal(await runCli(["snapshot"], snapshotIo), 0);
+
+  const checkIo = { cwd: temporary, stdout: memoryStream(), stderr: memoryStream() };
+  assert.equal(
+    await runCli(
+      ["check", "--format", "text", "--", process.execPath, fixtureV2],
+      checkIo,
+    ),
+    1,
+  );
+  assert.match(checkIo.stdout.read(), /Required bump: MAJOR/u);
 });

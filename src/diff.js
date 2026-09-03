@@ -340,7 +340,42 @@ function compareCommand(changes, before, after) {
   }
 }
 
-export function diffSnapshots(beforeSnapshot, afterSnapshot) {
+function summarizeChanges(changes) {
+  const summary = { major: 0, minor: 0, patch: 0 };
+  for (const change of changes) summary[change.level] += 1;
+  const requiredBump = summary.major > 0
+    ? "major"
+    : summary.minor > 0
+      ? "minor"
+      : summary.patch > 0
+        ? "patch"
+        : "none";
+  return {
+    requiredBump,
+    compatible: requiredBump !== "major",
+    summary,
+    changes,
+  };
+}
+
+function matchesIgnoreRule(changeCode, rule) {
+  if (rule.endsWith(".*")) return changeCode.startsWith(rule.slice(0, -1));
+  return changeCode === rule;
+}
+
+export function applyIgnoreRules(result, ignore = []) {
+  if (!Array.isArray(ignore) || ignore.some((rule) => typeof rule !== "string")) {
+    throw new Error("ignore rules must be a string array");
+  }
+  if (ignore.length === 0) return result;
+  return summarizeChanges(
+    result.changes.filter(
+      (change) => !ignore.some((rule) => matchesIgnoreRule(change.code, rule)),
+    ),
+  );
+}
+
+export function diffSnapshots(beforeSnapshot, afterSnapshot, options = {}) {
   const before = assertValidSnapshot(beforeSnapshot);
   const after = assertValidSnapshot(afterSnapshot);
   const oldCommands = flattenCommands(before.root);
@@ -381,22 +416,7 @@ export function diffSnapshots(beforeSnapshot, afterSnapshot) {
       left.path.localeCompare(right.path) ||
       left.code.localeCompare(right.code),
   );
-  const summary = { major: 0, minor: 0, patch: 0 };
-  for (const change of changes) summary[change.level] += 1;
-  const requiredBump = summary.major > 0
-    ? "major"
-    : summary.minor > 0
-      ? "minor"
-      : summary.patch > 0
-        ? "patch"
-        : "none";
-
-  return {
-    requiredBump,
-    compatible: requiredBump !== "major",
-    summary,
-    changes,
-  };
+  return applyIgnoreRules(summarizeChanges(changes), options.ignore ?? []);
 }
 
 export function meetsThreshold(result, threshold = "major") {

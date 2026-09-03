@@ -1,5 +1,10 @@
 export { captureSnapshot, runTarget } from "./capture.js";
-export { CHANGE_LEVELS, diffSnapshots, meetsThreshold } from "./diff.js";
+export {
+  CHANGE_LEVELS,
+  applyIgnoreRules,
+  diffSnapshots,
+  meetsThreshold,
+} from "./diff.js";
 export { formatJson, formatMarkdown, formatResult, formatText } from "./format.js";
 export { readSnapshot, writeJsonFile } from "./io.js";
 export {

@@ -16,9 +16,10 @@ ship accidentally. `clisemver` snapshots that interface and checks every change 
 - Produces text, Markdown, or JSON reports.
 - Runs target commands without a shell.
 - Publishes a machine-readable JSON Schema for snapshot v1.
+- Supports a checked-in `clisemver.config.json` for repeatable CI commands.
 - Available as both a CLI library and a dependency-free GitHub Action.
 
-> **Project status:** v0.2 is an early release. The snapshot schema is versioned,
+> **Project status:** v0.3 is an early release. The snapshot schema is versioned,
 > but help parsers will continue to improve as real-world fixtures are contributed.
 
 ## Quick start
@@ -47,6 +48,23 @@ Changes: 2 majors, 1 minor, 0 patches
 
 Publishing to npm is planned but not configured yet. Until then, use a checkout or
 the GitHub Action below.
+
+## Configuration
+
+For repeatable commands, create `clisemver.config.json` in the working directory:
+
+```json
+{
+  "command": ["node", "./dist/cli.js"],
+  "snapshot": ".clisemver/snapshot.json",
+  "failOn": "major",
+  "ignore": ["command.description-changed"]
+}
+```
+
+Then run `clisemver snapshot` or `clisemver check`. Explicit flags and a target
+command after `--` override the file. See the complete
+[configuration guide](docs/CONFIGURATION.md).
 
 ## GitHub Action
 

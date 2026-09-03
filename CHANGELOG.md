@@ -5,6 +5,14 @@ is based on Keep a Changelog and this project follows Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-03
+
+### Added
+
+- Optional `clisemver.config.json` for repeatable CLI and CI commands.
+- Exact and namespace wildcard ignore rules for compatibility changes.
+- `applyIgnoreRules` and configurable `diffSnapshots` options in the JavaScript API.
+
 ## [0.2.0] - 2026-09-03
 
 ### Added

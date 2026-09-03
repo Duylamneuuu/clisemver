@@ -125,3 +125,26 @@ test("classifies a root command rename as major", () => {
     result.changes.some((change) => change.code === "command.root-name-changed"),
   );
 });
+
+test("applies exact and namespace ignore rules before summarizing", () => {
+  const before = baseline();
+  const after = structuredClone(before);
+  after.root.options[0].default = "file";
+  after.root.options.push({
+    key: "--debug",
+    names: ["--debug"],
+    argument: null,
+    required: false,
+    negatable: false,
+    description: "Debug output",
+  });
+
+  const exact = diffSnapshots(before, after, { ignore: ["option.default-changed"] });
+  assert.equal(exact.requiredBump, "minor");
+  assert.equal(exact.summary.major, 0);
+  assert.equal(exact.summary.minor, 1);
+
+  const namespace = diffSnapshots(before, after, { ignore: ["option.*"] });
+  assert.equal(namespace.requiredBump, "none");
+  assert.deepEqual(namespace.summary, { major: 0, minor: 0, patch: 0 });
+});

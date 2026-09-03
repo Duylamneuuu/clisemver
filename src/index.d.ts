@@ -57,6 +57,10 @@ export interface DiffResult {
   changes: CompatibilityChange[];
 }
 
+export interface DiffOptions {
+  ignore?: string[];
+}
+
 export interface CaptureOptions {
   cwd?: string;
   timeoutMs?: number;
@@ -91,7 +95,12 @@ export function runTarget(
   command: string[],
   options?: CaptureOptions,
 ): Promise<TargetResult>;
-export function diffSnapshots(before: CliSnapshot, after: CliSnapshot): DiffResult;
+export function diffSnapshots(
+  before: CliSnapshot,
+  after: CliSnapshot,
+  options?: DiffOptions,
+): DiffResult;
+export function applyIgnoreRules(result: DiffResult, ignore?: string[]): DiffResult;
 export function meetsThreshold(result: DiffResult, threshold?: SemVerLevel): boolean;
 export function formatText(result: DiffResult): string;
 export function formatMarkdown(result: DiffResult): string;

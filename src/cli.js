@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { captureSnapshot } from "./capture.js";
+import { readConfig } from "./config.js";
 import { CHANGE_LEVELS, diffSnapshots, meetsThreshold } from "./diff.js";
 import { formatResult } from "./format.js";
 import { readSnapshot, writeJsonFile } from "./io.js";
@@ -143,6 +144,17 @@ function splitTarget(args) {
   return { ownArgs: args.slice(0, separator), target: args.slice(separator + 1) };
 }
 
+function mergeConfigOptions(explicit, config) {
+  const configured = {
+    ...config,
+    ...(config.snapshot === undefined
+      ? {}
+      : { output: config.snapshot, against: config.snapshot }),
+    ...(config.timeout === undefined ? {} : { timeoutMs: config.timeout }),
+  };
+  return { ...configured, ...explicit };
+}
+
 function captureOptions(options, baseCwd) {
   return {
     cwd: path.resolve(baseCwd, options.cwd ?? "."),
@@ -181,12 +193,18 @@ function ensureTarget(target) {
 
 async function snapshotCommand(args, io) {
   const { ownArgs, target } = splitTarget(args);
-  ensureTarget(target);
   const { options, positionals } = parseFlags(ownArgs);
   if (positionals.length > 0) throw new Error(`Unexpected argument: ${positionals[0]}`);
-  const snapshot = await captureSnapshot(target, captureOptions(options, io.cwd));
-  if (options.output) {
-    const written = await writeJsonFile(options.output, snapshot, io.cwd);
+  const config = await readConfig(io.cwd);
+  const resolvedOptions = mergeConfigOptions(options, config);
+  const resolvedTarget = target.length > 0 ? target : config.command ?? [];
+  ensureTarget(resolvedTarget);
+  const snapshot = await captureSnapshot(
+    resolvedTarget,
+    captureOptions(resolvedOptions, io.cwd),
+  );
+  if (resolvedOptions.output) {
+    const written = await writeJsonFile(resolvedOptions.output, snapshot, io.cwd);
     io.stderr.write(`Wrote ${path.relative(io.cwd, written) || path.basename(written)}\n`);
   } else {
     io.stdout.write(`${JSON.stringify(snapshot, null, 2)}\n`);
@@ -197,14 +215,20 @@ async function snapshotCommand(args, io) {
 
 async function checkCommand(args, io) {
   const { ownArgs, target } = splitTarget(args);
-  ensureTarget(target);
   const { options, positionals } = parseFlags(ownArgs);
   if (positionals.length > 0) throw new Error(`Unexpected argument: ${positionals[0]}`);
-  if (!options.against) throw new Error("check requires --against <snapshot.json>");
-  const baseline = await readSnapshot(options.against, io.cwd);
-  const current = await captureSnapshot(target, captureOptions(options, io.cwd));
-  const result = diffSnapshots(baseline, current);
-  const { format, failOn } = diffOptions(options);
+  const config = await readConfig(io.cwd);
+  const resolvedOptions = mergeConfigOptions(options, config);
+  const resolvedTarget = target.length > 0 ? target : config.command ?? [];
+  ensureTarget(resolvedTarget);
+  if (!resolvedOptions.against) throw new Error("check requires --against <snapshot.json>");
+  const baseline = await readSnapshot(resolvedOptions.against, io.cwd);
+  const current = await captureSnapshot(
+    resolvedTarget,
+    captureOptions(resolvedOptions, io.cwd),
+  );
+  const result = diffSnapshots(baseline, current, { ignore: resolvedOptions.ignore });
+  const { format, failOn } = diffOptions(resolvedOptions);
   io.stdout.write(`${formatResult(result, format)}\n`);
   for (const warning of current.warnings) io.stderr.write(`Warning: ${warning}\n`);
   return meetsThreshold(result, failOn) ? 1 : 0;
@@ -217,12 +241,14 @@ async function diffCommand(args, io) {
   if (positionals.length !== 2) {
     throw new Error("diff requires <before.json> and <after.json>");
   }
+  const config = await readConfig(io.cwd);
+  const resolvedOptions = mergeConfigOptions(options, config);
   const [before, after] = await Promise.all([
     readSnapshot(positionals[0], io.cwd),
     readSnapshot(positionals[1], io.cwd),
   ]);
-  const result = diffSnapshots(before, after);
-  const { format, failOn } = diffOptions(options);
+  const result = diffSnapshots(before, after, { ignore: resolvedOptions.ignore });
+  const { format, failOn } = diffOptions(resolvedOptions);
   io.stdout.write(`${formatResult(result, format)}\n`);
   return meetsThreshold(result, failOn) ? 1 : 0;
 }
