@@ -13,6 +13,7 @@ const sourceDirectories = [
   "docs",
   "examples",
   "fixtures",
+  "schema",
   "scripts",
   "src",
   "test",

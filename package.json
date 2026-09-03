@@ -1,6 +1,6 @@
 {
   "name": "clisemver",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Detect breaking changes in command-line interfaces.",
   "type": "module",
   "bin": {
@@ -11,12 +11,14 @@
       "types": "./src/index.d.ts",
       "import": "./src/index.js"
     },
+    "./schema": "./schema/clisemver.snapshot.schema.json",
     "./package.json": "./package.json"
   },
   "types": "./src/index.d.ts",
   "files": [
     "action/",
     "bin/",
+    "schema/",
     "src/",
     "action.yml",
     "LICENSE",

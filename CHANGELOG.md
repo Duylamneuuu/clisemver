@@ -5,6 +5,13 @@ is based on Keep a Changelog and this project follows Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-03
+
+### Added
+
+- A dependency-free JSON Schema for snapshot schema version 1.
+- The `clisemver/schema` package export for editor and CI integrations.
+
 ## [0.1.0] - 2026-09-02
 
 ### Added

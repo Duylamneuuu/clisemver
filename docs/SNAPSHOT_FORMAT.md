@@ -59,3 +59,11 @@ help deterministic or normalize those values before invoking clisemver.
 Readers reject unknown schema versions instead of silently misclassifying changes.
 A future format revision will use a new `schemaVersion` and include a documented
 migration path.
+
+## Machine-readable JSON Schema
+
+The canonical JSON Schema for snapshot v1 is available at
+[`schema/clisemver.snapshot.schema.json`](../schema/clisemver.snapshot.schema.json) and
+is exposed as `clisemver/schema` in package releases. It is intended for editors,
+CI validators, and integrations that need to inspect snapshots without executing
+JavaScript.

@@ -15,9 +15,10 @@ ship accidentally. `clisemver` snapshots that interface and checks every change 
 - Recursively inspects subcommands.
 - Produces text, Markdown, or JSON reports.
 - Runs target commands without a shell.
+- Publishes a machine-readable JSON Schema for snapshot v1.
 - Available as both a CLI library and a dependency-free GitHub Action.
 
-> **Project status:** v0.1 is an early release. The snapshot schema is versioned,
+> **Project status:** v0.2 is an early release. The snapshot schema is versioned,
 > but help parsers will continue to improve as real-world fixtures are contributed.
 
 ## Quick start
@@ -111,6 +112,10 @@ clisemver validate .clisemver/snapshot.json
 
 Validates a snapshot against schema version 1. Run `clisemver --help` for every
 option and exit code.
+
+The same schema is available at
+[`schema/clisemver.snapshot.schema.json`](schema/clisemver.snapshot.schema.json) and
+through the `clisemver/schema` package export.
 
 ## Compatibility rules
 

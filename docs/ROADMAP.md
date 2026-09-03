@@ -16,7 +16,7 @@ The roadmap is ordered around real adoption rather than feature count.
 - Config file for ignore rules and custom help/version arguments.
 - Framework adapters that consume native command metadata when available.
 - Snapshot migration command.
-- Stable machine-readable JSON Schema.
+- Stable machine-readable JSON Schema (**delivered in v0.2.0**).
 - Test probes for exit codes and opt-in structured output contracts.
 - Windows command shim discovery.
 

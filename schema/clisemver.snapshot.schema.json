@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Duylamneuuu/clisemver/blob/main/schema/clisemver.snapshot.schema.json",
+  "title": "clisemver snapshot",
+  "description": "The machine-readable schema for a clisemver CLI interface snapshot.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "command",
+    "version",
+    "warnings",
+    "root"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1,
+      "description": "The clisemver snapshot schema version."
+    },
+    "command": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "The executable and arguments used to capture the snapshot."
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The first line returned by the target version probe, or null."
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Deterministically sorted warnings from partial capture."
+    },
+    "root": {
+      "$ref": "#/$defs/command"
+    }
+  },
+  "$defs": {
+    "valueArgument": {
+      "type": "object",
+      "required": [
+        "name",
+        "required",
+        "variadic"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "variadic": {
+          "type": "boolean"
+        }
+      },
+      "description": "The value accepted by an option."
+    },
+    "option": {
+      "type": "object",
+      "required": [
+        "key",
+        "names",
+        "argument",
+        "required",
+        "negatable",
+        "description"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^-"
+        },
+        "names": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "argument": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/valueArgument"
+            }
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "negatable": {
+          "type": "boolean"
+        },
+        "description": {
+          "type": "string"
+        },
+        "default": {
+          "type": "string"
+        },
+        "choices": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "description": "A public command-line option."
+    },
+    "positional": {
+      "type": "object",
+      "required": [
+        "name",
+        "required",
+        "variadic"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "variadic": {
+          "type": "boolean"
+        }
+      },
+      "description": "A positional argument accepted by a command."
+    },
+    "command": {
+      "type": "object",
+      "required": [
+        "name",
+        "path",
+        "usage",
+        "description",
+        "options",
+        "positionals",
+        "subcommands"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "usage": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/option"
+          }
+        },
+        "positionals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/positional"
+          }
+        },
+        "subcommands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/command"
+          }
+        }
+      },
+      "description": "A command and its recursively discovered public interface."
+    }
+  }
+}
