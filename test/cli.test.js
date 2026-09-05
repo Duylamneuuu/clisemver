@@ -33,7 +33,7 @@ test("shows help and version", async () => {
 
   const versionIo = io();
   assert.equal(await runCli(["--version"], versionIo), 0);
-  assert.match(versionIo.stdout.read(), /^0\.3\.0/u);
+  assert.match(versionIo.stdout.read(), /^0\.4\.0/u);
 });
 
 test("captures, validates, and checks snapshots end to end", async (context) => {

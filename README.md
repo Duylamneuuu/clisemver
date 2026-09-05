@@ -19,7 +19,7 @@ ship accidentally. `clisemver` snapshots that interface and checks every change 
 - Supports a checked-in `clisemver.config.json` for repeatable CI commands.
 - Available as both a CLI library and a dependency-free GitHub Action.
 
-> **Project status:** v0.3 is an early release. The snapshot schema is versioned,
+> **Project status:** v0.4 is an early release. The snapshot schema is versioned,
 > but help parsers will continue to improve as real-world fixtures are contributed.
 
 ## Quick start
@@ -81,7 +81,7 @@ steps:
       node-version: 20
   - run: npm ci
   - run: npm run build
-  - uses: Duylamneuuu/clisemver@v0.1.0
+  - uses: Duylamneuuu/clisemver@v0.4.0
     with:
       command: '["node","./dist/cli.js"]'
       snapshot: .clisemver/snapshot.json

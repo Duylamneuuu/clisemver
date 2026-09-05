@@ -5,6 +5,14 @@ is based on Keep a Changelog and this project follows Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-09-05
+
+### Added
+
+- Wrapped help descriptions now join across indented continuation lines.
+- Unknown section headings stop parser entries from leaking into the previous section.
+- Regression coverage for wrapped option and command descriptions.
+
 ## [0.3.0] - 2026-09-03
 
 ### Added

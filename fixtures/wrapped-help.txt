@@ -1,0 +1,17 @@
+A tool with wrapped help text.
+
+Usage: demo [command]
+
+Options:
+  --verbose              Enable verbose logging for development
+                         and debugging.
+  --mode <kind>          Choose the execution mode
+                         [choices: fast, safe]
+
+Commands:
+  run                    Run the selected task
+                         with the configured options.
+  list                   List available tasks
+
+Examples:
+  demo run

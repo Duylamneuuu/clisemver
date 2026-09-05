@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
   normalizeHelp,
@@ -96,4 +97,33 @@ test("does not confuse option values with positional arguments", () => {
     { name: "input", required: true, variadic: false },
     { name: "output", required: false, variadic: false },
   ]);
+});
+
+test("joins wrapped option and command descriptions", () => {
+  const helpText = readFileSync(
+    new URL("../fixtures/wrapped-help.txt", import.meta.url),
+    "utf8",
+  );
+  const parsed = parseHelpText(helpText);
+
+  assert.deepEqual(
+    parsed.command.options.map((option) => ({ key: option.key, description: option.description })),
+    [
+      { key: "--mode", description: "Choose the execution mode [choices: fast, safe]" },
+      { key: "--verbose", description: "Enable verbose logging for development and debugging." },
+    ],
+  );
+  assert.deepEqual(parsed.discoveredCommands, [
+    {
+      name: "run",
+      aliases: [],
+      summary: "Run the selected task with the configured options.",
+    },
+    {
+      name: "list",
+      aliases: [],
+      summary: "List available tasks",
+    },
+  ]);
+  assert.ok(!parsed.discoveredCommands.some((command) => command.name === "demo"));
 });

@@ -185,6 +185,46 @@ export function parseCommandLine(line) {
   };
 }
 
+function lineIndent(line) {
+  return (line.match(/^\s*/u)?.[0] ?? "").replace(/\t/g, "    ").length;
+}
+
+function isSectionHeadingLine(line) {
+  if (lineIndent(line) !== 0) return false;
+  return /^[A-Za-z][A-Za-z0-9 _-]*:\s*$/u.test(line.trim());
+}
+
+function collapseWrappedLines(lines, parseEntry, isEntryStart) {
+  const collapsed = [];
+  let current = null;
+
+  const flush = () => {
+    if (current) collapsed.push(current.line);
+    current = null;
+  };
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed || isSectionHeadingLine(line)) {
+      flush();
+      continue;
+    }
+
+    const indent = lineIndent(line);
+    if (current && indent > current.indent && !isEntryStart(line)) {
+      current.line = `${current.line.trimEnd()} ${trimmed}`;
+      continue;
+    }
+
+    flush();
+    if (isEntryStart(line) || parseEntry(line)) {
+      current = { indent, line };
+    }
+  }
+  flush();
+  return collapsed;
+}
+
 function mergeOptions(options) {
   const merged = new Map();
   for (const option of options) {
@@ -245,7 +285,17 @@ export function parseHelpText(helpText, context = {}) {
       continue;
     }
 
-    if (!trimmed) continue;
+    if (isSectionHeadingLine(line)) {
+      currentSection = null;
+      continue;
+    }
+
+    if (!trimmed) {
+      if (currentSection && currentSection !== "usage") {
+        sections[currentSection].push("");
+      }
+      continue;
+    }
     if (currentSection === "usage" && !usage) {
       usage = trimmed;
       continue;
@@ -257,17 +307,30 @@ export function parseHelpText(helpText, context = {}) {
     if (!sawStructuredSection) preamble.push(trimmed);
   }
 
-  const parsedOptions = sections.options
-    .filter((line) => /^\s*-/u.test(line))
+  const parsedOptions = collapseWrappedLines(
+    sections.options,
+    parseOptionLine,
+    (line) => /^\s*-/u.test(line),
+  )
     .map(parseOptionLine)
     .filter(Boolean);
-  const commands = sections.commands
+  const commands = collapseWrappedLines(
+    sections.commands,
+    parseCommandLine,
+    () => false,
+  )
     .map(parseCommandLine)
     .filter(Boolean)
     .filter((command, index, all) =>
       all.findIndex((candidate) => candidate.name === command.name) === index,
     );
-  const listedPositionals = sections.arguments.map(parseArgumentLine).filter(Boolean);
+  const listedPositionals = collapseWrappedLines(
+    sections.arguments,
+    parseArgumentLine,
+    () => false,
+  )
+    .map(parseArgumentLine)
+    .filter(Boolean);
   const positionals = listedPositionals.length > 0
     ? listedPositionals
     : parseUsagePositionals(usage);
