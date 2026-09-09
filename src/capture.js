@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import path from "node:path";
 import process from "node:process";
 import { parseHelpText } from "./parser.js";
+import { resolveTargetCommand } from "./resolve-command.js";
 import { SNAPSHOT_SCHEMA_VERSION, assertValidSnapshot } from "./schema.js";
 
 const DEFAULT_TIMEOUT_MS = 10_000;
@@ -45,8 +46,20 @@ export function runTarget(command, options = {}) {
     return Promise.reject(createCaptureError("Target command must not be empty"));
   }
 
+  let invocation;
+  try {
+    invocation = resolveTargetCommand(command, {
+      cwd,
+      env: { ...process.env, ...env },
+      platform: options.platform,
+      execPath: options.execPath,
+    });
+  } catch (cause) {
+    return Promise.reject(createCaptureError(cause.message, { cause, command }));
+  }
+
   return new Promise((resolve, reject) => {
-    const [executable, ...args] = command;
+    const [executable, ...args] = invocation;
     let stdout = "";
     let stderr = "";
     let settled = false;
@@ -250,6 +263,8 @@ export async function captureSnapshot(command, inputOptions = {}) {
     versionArgs: inputOptions.versionArgs === undefined ? ["--version"] : inputOptions.versionArgs,
     env: inputOptions.env ?? {},
     warnings: [],
+    platform: inputOptions.platform,
+    execPath: inputOptions.execPath,
   };
 
   if (!Number.isInteger(options.maxDepth) || options.maxDepth < 0 || options.maxDepth > 20) {

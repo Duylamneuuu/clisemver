@@ -32,6 +32,35 @@ clisemver check
 `check`. `command` is the executable-and-argument array passed to the target without
 a shell. This preserves argument boundaries and keeps configuration data inert.
 
+## Windows command resolution
+
+On Windows only, if the first array entry is an npm `.cmd` or `.bat` shim (or a
+bare name that resolves to one), clisemver rewrites it before `spawn`:
+
+1. Leave already-safe targets unchanged: `node`, `process.execPath`, `.exe`,
+   `.com`, `.js`, `.mjs`, and `.cjs`.
+2. Locate a bare name or `.cmd` / `.bat` using the explicit path, the working
+   directory, `node_modules/.bin`, then `PATH`. Lookup does not start a shell.
+3. Read the shim and accept only npm-style node launches. The quoted JavaScript
+   path before `%*` is resolved relative to the shim directory. A `node.exe` next
+   to the shim is used when that file exists; otherwise `process.execPath`.
+4. Spawn `[node, script, ...originalArgs]` with `shell: false`. The snapshot still
+   records the original command array.
+
+Shim text is rejected when it is not an npm node shim, names more than one
+script, points at a missing file, uses unexpected `%VAR%` expansions, or contains
+shell operators (`&`, `|`, `>`, `<`, `^`) outside the npm cmd-shim boilerplate.
+There is no fallback to `shell: true` or `cmd.exe /c`. Pass an explicit
+JavaScript entry instead:
+
+```json
+{
+  "command": ["node", "./path/to/cli.js"]
+}
+```
+
+Non-Windows platforms never rewrite the command.
+
 ## Fields
 
 | Field | Meaning |

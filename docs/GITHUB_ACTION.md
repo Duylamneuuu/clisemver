@@ -21,6 +21,10 @@ shell:
 command: '["python","-m","my_package"]'
 ```
 
+On Windows, npm `.cmd` shims in that array are rewritten to `node` plus the
+JavaScript entry. They are never run through `cmd.exe`. See
+[Windows command resolution](CONFIGURATION.md#windows-command-resolution).
+
 ## Outputs
 
 | Output | Value |

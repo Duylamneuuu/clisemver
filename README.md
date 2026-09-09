@@ -175,6 +175,14 @@ enforces a timeout, and limits captured output to one megabyte by default. It do
 not sandbox or block network access for the target process. The GitHub Action
 accepts the command as JSON so untrusted text is not interpolated into a shell.
 
+On Windows, npm-installed binaries are often `.cmd` shims. Node 20+ refuses to
+spawn those with `shell: false`. clisemver does not turn the shell on. It locates
+the shim (explicit path, the working directory, `node_modules/.bin`, or `PATH`),
+parses npm-style shim text, and rewrites the target to
+`[node, script, ...originalArgs]`. Malicious or non-npm batch files are rejected;
+pass `["node", "./path/to/cli.js"]` instead. See
+[Windows command resolution](docs/CONFIGURATION.md#windows-command-resolution).
+
 ## Library API
 
 ```js

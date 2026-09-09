@@ -5,6 +5,13 @@ is based on Keep a Changelog and this project follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Added
+
+- Windows npm `.cmd` / `.bat` shims are rewritten to `node` plus the JavaScript
+  entry and spawned with `shell: false`. Batch files are parsed, never executed.
+  Unsupported or malicious shim text is rejected with an error that asks for
+  `["node", "./path/to/cli.js"]`.
+
 ## [0.4.0] - 2026-09-05
 
 ### Added
