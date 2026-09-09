@@ -19,7 +19,8 @@ The roadmap is ordered around real adoption rather than feature count.
 - Snapshot migration command.
 - Stable machine-readable JSON Schema (**delivered in v0.2.0**).
 - Test probes for exit codes and opt-in structured output contracts.
-- Windows command shim discovery.
+- Windows command shim discovery (**addressed: npm `.cmd` shims resolve to
+  `node` plus the JavaScript entry without a shell**).
 
 ## Good contribution boundaries
 
